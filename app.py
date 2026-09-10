@@ -3,7 +3,7 @@ import time
 import streamlit as st
 
 st.set_page_config(
-    page_title="AI Assistant",
+    page_title="Maya",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"

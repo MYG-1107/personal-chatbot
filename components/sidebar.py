@@ -3,7 +3,7 @@ from streamlit_option_menu import option_menu
 
 def render_sidebar():
     with st.sidebar:
-        st.markdown("<h3 style='margin-bottom: 1rem; font-weight: 600; color: #000000;'>AI Assistant</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='margin-bottom: 1rem; font-weight: 600; color: #000000;'>Maya</h3>", unsafe_allow_html=True)
         
         # Pure Black New Chat Button
         if st.button("+ New Chat", use_container_width=True):
