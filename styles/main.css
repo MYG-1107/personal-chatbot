@@ -1,76 +1,84 @@
-/* Modern AI Canvas Theme (ChatGPT / Gemini Minimalist Style) */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-html, body, [class*="css"] {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+:root {
+    --bg-main: #ffffff;
+    --bg-secondary: #f4f4f5;
+    --text-primary: #000000;
+    --text-secondary: #71717a;
+    --border-color: #e4e4e7;
+    --black: #000000;
+    --white: #ffffff;
 }
 
-/* Hide Default Streamlit Chrome */
-#MainMenu {visibility: hidden;}
-header {visibility: hidden;}
-footer {visibility: hidden;}
+/* Base Configuration */
+html, body, [class*="css"] {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    color: var(--text-primary) !important;
+    background-color: var(--bg-main) !important;
+}
 
-/* Main Canvas Centering & Spacing */
+.stApp {
+    background-color: var(--bg-main) !important;
+}
+
+/* Main Content Centered Layout (768px reading width) */
 .stMainBlockContainer {
-    max-width: 800px !important;
-    padding-top: 2rem !important;
-    padding-bottom: 6rem !important;
+    max-width: 768px !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 5rem !important;
     margin: 0 auto !important;
 }
 
-/* Sidebar Refinements */
-[data-testid="stSidebar"] {
-    background-color: #f8fafc !important;
-    border-right: 1px solid #e2e8f0 !important;
+/* Sidebar Toggle Header Fix (Ensures Open/Close Button Remains Visible) */
+[data-testid="stHeader"] {
+    background-color: transparent !important;
+    z-index: 100 !important;
 }
 
-/* Native Chat Message Enhancements */
+[data-testid="stHeader"] button {
+    color: var(--black) !important;
+    background-color: var(--white) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 6px !important;
+}
+
+/* Sidebar Styling */
+[data-testid="stSidebar"] {
+    background-color: var(--bg-secondary) !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+
+/* Native Chat Messages */
 [data-testid="stChatMessage"] {
     background-color: transparent !important;
     padding: 1rem 0 !important;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-/* User Bubble Custom Styling */
-[data-testid="stChatMessage"]:nth-child(even) {
-    background-color: transparent !important;
+    border-bottom: 1px solid var(--border-color) !important;
 }
 
 /* Input Box Styling */
 [data-testid="stChatInput"] {
-    border-radius: 24px !important;
-    border: 1px solid #cbd5e1 !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
-    background-color: #ffffff !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--black) !important;
+    background-color: var(--white) !important;
 }
 
 [data-testid="stChatInput"]:focus-within {
-    border-color: #6366f1 !important;
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.12) !important;
+    border-color: var(--black) !important;
+    box-shadow: none !important;
 }
 
-/* Button & Icon Micro-Interactions */
+/* Primary Black Buttons */
 .stButton > button {
-    border-radius: 12px !important;
-    border: 1px solid #e2e8f0 !important;
-    transition: all 0.2s ease !important;
+    background-color: var(--white) !important;
+    color: var(--black) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    transition: all 0.15s ease !important;
 }
 
 .stButton > button:hover {
-    border-color: #cbd5e1 !important;
-    background-color: #f8fafc !important;
-}
-
-/* Status Pill */
-.status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    background-color: #f0fdf4;
-    color: #166534;
-    font-size: 0.8rem;
-    font-weight: 500;
-    border: 1px solid #bbf7d0;
+    background-color: var(--black) !important;
+    color: var(--white) !important;
+    border-color: var(--black) !important;
 }
