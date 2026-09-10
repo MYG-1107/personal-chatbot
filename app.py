@@ -9,21 +9,40 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS Injection
-def load_css(file_path: str):
-    if os.path.exists(file_path):
-        with open(file_path, "r") as f:
+# Custom CSS & Dynamic Font Size Injection
+def apply_custom_styles():
+    # Load main CSS file
+    if os.path.exists("styles/main.css"):
+        with open("styles/main.css", "r") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-load_css("styles/main.css")
+    # Dynamic Font Size Mapping
+    font_size_setting = st.session_state.get("font_size", "Medium")
+    font_map = {
+        "Small": "13px",
+        "Medium": "16px",
+        "Large": "19px"
+    }
+    selected_size = font_map.get(font_size_setting, "16px")
 
-# Import Page Controllers & Components
+    dynamic_css = f"""
+    <style>
+        html, body, .stApp, p, div, span, button, input, textarea {{
+            font-size: {selected_size} !important;
+        }}
+    </style>
+    """
+    st.markdown(dynamic_css, unsafe_allow_html=True)
+
+apply_custom_styles()
+
+# Import Page Controllers
 from components.sidebar import render_sidebar
-from pages.home import render_home_page
-from pages.chat import render_chat_page
-from pages.history import render_history_page
-from pages.settings import render_settings_page
-from pages.profile import render_profile_page
+from views.home import render_home_page
+from views.chat import render_chat_page
+from views.history import render_history_page
+from views.settings import render_settings_page
+from views.profile import render_profile_page
 
 # Router Execution
 render_sidebar()

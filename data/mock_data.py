@@ -1,9 +1,9 @@
 USER_PROFILE = {
-    "name": "Alex Morgan",
+    "name": "Sandya",
     "email": "alex.morgan@example.com",
     "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
-    "plan": "Pro Tier",
-    "joined": "January 2026"
+    "plan": "Pro",
+    "joined": "September 2026"
 }
 
 SUGGESTED_PROMPTS = [
