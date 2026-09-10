@@ -7,36 +7,28 @@ from components.cards import render_prompt_card
 from components.footer import render_footer
 from data.mock_data import SUGGESTED_PROMPTS
 
-def generate_ai_response(prompt: str, model_name: str = "gemini-1.5-flash") -> str:
-    """Rotates through GEMINI_KEYS from secrets.toml if quota/rate errors occur."""
-    api_keys = st.secrets.get("GEMINI_KEYS", [])
-    
-    if not api_keys:
-        return "⚠️ Error: No API keys configured in .streamlit/secrets.toml."
+def generate_ai_response(prompt: str, model_name: str = "gemini-3.6-flash") -> str:
+    """Generates an AI response using a single API key."""
+    # Retrieve key (falls back to first element of GEMINI_KEYS if GEMINI_API_KEY isn't set)
+    api_key = st.secrets.get("GEMINI_API_KEY")
+    if not api_key:
+        keys_list = st.secrets.get("GEMINI_KEYS", [])
+        if keys_list:
+            api_key = keys_list[0]
 
-    if "active_key_index" not in st.session_state:
-        st.session_state["active_key_index"] = 0
+    if not api_key:
+        return "⚠️ Error: No API key found in .streamlit/secrets.toml."
 
-    total_keys = len(api_keys)
-    attempts = 0
+    # Clean whitespace and accidental surrounding quotes
+    clean_key = str(api_key).strip().strip('"').strip("'")
 
-    while attempts < total_keys:
-        current_index = st.session_state["active_key_index"]
-        current_key = api_keys[current_index]
-
-        try:
-            genai.configure(api_key=current_key)
-            model = genai.GenerativeModel(model_name)
-            response = model.generate_content(prompt)
-            return response.text
-
-        except Exception as e:
-            # Rotate to next key on failure
-            st.session_state["active_key_index"] = (current_index + 1) % total_keys
-            attempts += 1
-            st.toast(f"⚠️ Key #{current_index + 1} limit reached. Switched to Key #{st.session_state['active_key_index'] + 1}...")
-
-    return "❌ All API keys in your rotation pool have reached their rate limits or failed."
+    try:
+        genai.configure(api_key=clean_key)
+        model = genai.GenerativeModel(model_name)
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return f"❌ Google API Error: `{str(e)}`"
 
 
 def render_chat_page():
@@ -70,7 +62,7 @@ def render_chat_page():
                     })
                     st.rerun()
     else:
-        # Render Active Conversation with unique widget index
+        # Render Active Conversation
         for idx, msg in enumerate(st.session_state["messages"]):
             render_message(
                 role=msg["role"],
