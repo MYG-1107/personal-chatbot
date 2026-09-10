@@ -1,42 +1,47 @@
 import os
+import time
 import streamlit as st
 
-# Page Configuration
 st.set_page_config(
-    page_title="Personal AI Assistant",
+    page_title="AI Assistant",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS & Dynamic Font Size Injection
-def apply_custom_styles():
-    # Load main CSS file
-    if os.path.exists("styles/main.css"):
-        with open("styles/main.css", "r") as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+# Initialize Session Telemetry Metrics
+if "session_start_time" not in st.session_state:
+    st.session_state["session_start_time"] = time.time()
 
-    # Dynamic Font Size Mapping
-    font_size_setting = st.session_state.get("font_size", "Medium")
-    font_map = {
-        "Small": "13px",
-        "Medium": "16px",
-        "Large": "19px"
-    }
-    selected_size = font_map.get(font_size_setting, "16px")
+if "messages" not in st.session_state:
+    st.session_state["messages"] = []
 
-    dynamic_css = f"""
-    <style>
-        html, body, .stApp, p, div, span, button, input, textarea {{
-            font-size: {selected_size} !important;
-        }}
-    </style>
-    """
-    st.markdown(dynamic_css, unsafe_allow_html=True)
+# Detect User Device Environment from Browser Headers
+def detect_user_device():
+    headers = st.context.headers
+    user_agent = headers.get("User-Agent", "") if headers else ""
+    
+    if "Macintosh" in user_agent or "Mac OS" in user_agent:
+        return "macOS User"
+    elif "Windows" in user_agent:
+        return "Windows User"
+    elif "Android" in user_agent:
+        return "Android User"
+    elif "iPhone" in user_agent or "iPad" in user_agent:
+        return "iOS User"
+    elif "Linux" in user_agent:
+        return "Linux User"
+    return "Guest User"
 
-apply_custom_styles()
+if "user_name" not in st.session_state:
+    st.session_state["user_name"] = detect_user_device()
 
-# Import Page Controllers
+# Apply CSS
+if os.path.exists("styles/main.css"):
+    with open("styles/main.css", "r") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# Navigation
 from components.sidebar import render_sidebar
 from views.home import render_home_page
 from views.chat import render_chat_page
@@ -44,7 +49,6 @@ from views.history import render_history_page
 from views.settings import render_settings_page
 from views.profile import render_profile_page
 
-# Router Execution
 render_sidebar()
 
 current_page = st.session_state.get("current_page", "Home")

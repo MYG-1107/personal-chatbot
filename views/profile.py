@@ -1,43 +1,49 @@
+import time
 import streamlit as st
 from components.header import render_header
 from components.footer import render_footer
-from data.mock_data import USER_PROFILE
 
 def render_profile_page():
-    render_header("User Profile", "Manage your credentials and subscription metrics.")
+    render_header("User Profile & Telemetry", "Live metrics and session information.")
 
-    # Fetch user name dynamically from session state
-    current_name = st.session_state.get("user_name", USER_PROFILE.get("name", "Sandya"))
+    # Calculate Real Session Duration
+    elapsed_seconds = int(time.time() - st.session_state.get("session_start_time", time.time()))
+    minutes, seconds = divmod(elapsed_seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    
+    if hours > 0:
+        duration_str = f"{hours}h {minutes}m"
+    elif minutes > 0:
+        duration_str = f"{minutes}m {seconds}s"
+    else:
+        duration_str = f"{seconds}s"
+
+    # Calculate Total Messages and Estimated Tokens
+    messages = st.session_state.get("messages", [])
+    user_msgs = [m for m in messages if m["role"] == "user"]
+    total_chars = sum(len(m.get("content", "")) for m in messages)
+    estimated_tokens = round(total_chars / 4)
 
     col1, col2 = st.columns([1, 2])
     with col1:
-        st.image(USER_PROFILE["avatar"], width=120)
-        st.button("Change Avatar")
+        st.markdown("### 👤 User Information")
+        st.info(f"**Identified Device:** {st.session_state.get('user_name', 'Guest')}")
 
     with col2:
-        # Interactive Name Input field linked to session state
-        updated_name = st.text_input("Full Name", value=current_name)
-        if updated_name != current_name:
-            st.session_state["user_name"] = updated_name
-            st.toast("✅ Profile name updated successfully!")
+        current_name = st.text_input("Personalized Name", value=st.session_state.get("user_name", "Guest"), key="profile_name_input")
+        if current_name != st.session_state.get("user_name"):
+            st.session_state["user_name"] = current_name
+            st.toast("✅ Name updated!")
             st.rerun()
 
-        st.text_input("Email", value=USER_PROFILE["email"])
-        st.text_input("Current Plan", value=USER_PROFILE["plan"], disabled=True)
-        st.caption(f"Member since {USER_PROFILE['joined']}")
-
     st.divider()
-    st.subheader("Usage Statistics")
-    m1, m2, m3 = st.columns(3)
-    m1.metric("Total Chats", "128")
-    m2.metric("Tokens Consumed", "45.2k")
-    m3.metric("Saved Prompts", "12")
+    st.subheader("📊 Real-Time Active Session Statistics")
+    
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Active Session Time", duration_str)
+    m2.metric("Messages Sent", f"{len(user_msgs)}")
+    m3.metric("Total Messages", f"{len(messages)}")
+    m4.metric("Est. Tokens Used", f"{estimated_tokens:,}")
 
-    st.divider()
-    if st.button("Log Out", type="primary"):
-        st.info("User session terminated.")
-
+    st.caption("Note: All session metrics and conversation logs are temporary and cleared upon closing this browser tab.")
     render_footer()
-
-# Execute page render
-render_profile_page()
